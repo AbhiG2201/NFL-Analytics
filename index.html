@@ -342,11 +342,16 @@ function updateStats(){
 }
 
 // OVERVIEW
+function safeReact(id, traces, layout, config){
+  try{ safeReact(id, traces, layout, config); }
+  catch(e){ console.error('Plotly error on #'+id+':', e); document.getElementById(id).innerHTML='<p style="color:#f06a6a;padding:1rem;font-size:11px;">Chart error: '+e.message+'</p>'; }
+}
+
 function drawOverview(){
   const{season,team}=state;
   const rows=DATA.summary.filter(r=>Number(r.season)===Number(season)).sort((a,b)=>b.pass_rate_pct-a.pass_rate_pct);
   const ap=lgAvg('pass_rate_pct',season),ar=lgAvg('run_rate_pct',season);
-  Plotly.react('chart-pass-run',[
+  safeReact('chart-pass-run',[
     {type:'bar',name:'Pass rate',x:rows.map(r=>r.posteam),y:rows.map(r=>r.pass_rate_pct),marker:{color:rows.map(r=>r.posteam===team?'#5b8dee':'#1e2a4a')},hovertemplate:'%{x} pass: %{y:.1f}%<extra></extra>'},
     {type:'bar',name:'Run rate', x:rows.map(r=>r.posteam),y:rows.map(r=>r.run_rate_pct), marker:{color:rows.map(r=>r.posteam===team?'#3ecf8e':'#1a3028')},hovertemplate:'%{x} run: %{y:.1f}%<extra></extra>'},
     {type:'scatter',mode:'lines',name:`Pass avg (${ap.toFixed(1)}%)`,x:rows.map(r=>r.posteam),y:rows.map(()=>ap),line:{color:'#5b8dee',dash:'dot',width:1.2},hoverinfo:'skip'},
@@ -354,7 +359,7 @@ function drawOverview(){
   ],{...L,barmode:'group',showlegend:true,yaxis:{...L.yaxis,ticksuffix:'%',title:'Rate'}},CFG);
 
   const rows2=DATA.summary.filter(r=>Number(r.season)===Number(season)).sort((a,b)=>b.shotgun_rate_pct-a.shotgun_rate_pct);
-  Plotly.react('chart-formation-overview',[
+  safeReact('chart-formation-overview',[
     {type:'bar',name:'Shotgun',  x:rows2.map(r=>r.posteam),y:rows2.map(r=>r.shotgun_rate_pct),  marker:{color:rows2.map(r=>r.posteam===team?'#5b8dee':'#1e2a4a')},hovertemplate:'%{x} shotgun: %{y:.1f}%<extra></extra>'},
     {type:'bar',name:'No-huddle',x:rows2.map(r=>r.posteam),y:rows2.map(r=>r.no_huddle_rate_pct),marker:{color:rows2.map(r=>r.posteam===team?'#f0a84a':'#3a2a10')},hovertemplate:'%{x} no-huddle: %{y:.1f}%<extra></extra>'},
   ],{...L,barmode:'group',showlegend:true,yaxis:{...L.yaxis,ticksuffix:'%',title:'Rate'}},CFG);
@@ -369,7 +374,7 @@ function drawEPA(){
   const rows=DATA.summary.filter(r=>Number(r.season)===Number(season));
 
   // Scatter
-  Plotly.react('chart-epa-scatter',rows.map(r=>({
+  safeReact('chart-epa-scatter',rows.map(r=>({
     type:'scatter',mode:'markers+text',
     x:[r.epa_per_rush],y:[r.epa_per_pass],
     text:[r.posteam],textposition:'top center',
@@ -389,14 +394,14 @@ function drawEPA(){
     ]},CFG);
 
   const sp=[...rows].sort((a,b)=>b.epa_per_pass-a.epa_per_pass);
-  Plotly.react('chart-epa-pass-bar',[{
+  safeReact('chart-epa-pass-bar',[{
     type:'bar',orientation:'h',x:sp.map(r=>r.epa_per_pass),y:sp.map(r=>r.posteam),
     marker:{color:sp.map(r=>r.posteam===team?'#5b8dee':'#2a2a50')},
     hovertemplate:'%{y}: %{x:.3f}<extra></extra>'
   }],{...L,margin:{t:10,r:20,b:40,l:50},xaxis:{...L.xaxis,title:'EPA per Pass',zeroline:true},yaxis:{...L.yaxis,autorange:'reversed'}},CFG);
 
   const sr=[...rows].sort((a,b)=>b.epa_per_rush-a.epa_per_rush);
-  Plotly.react('chart-epa-rush-bar',[{
+  safeReact('chart-epa-rush-bar',[{
     type:'bar',orientation:'h',x:sr.map(r=>r.epa_per_rush),y:sr.map(r=>r.posteam),
     marker:{color:sr.map(r=>r.posteam===team?'#3ecf8e':'#1a3028')},
     hovertemplate:'%{y}: %{x:.3f}<extra></extra>'
@@ -411,7 +416,7 @@ function drawSuccess(){
   const srBar=(elId,field,color,label)=>{
     const s=[...rows].sort((a,b)=>b[field]-a[field]);
     const a=rows.reduce((sum,r)=>sum+(r[field]||0),0)/rows.length;
-    Plotly.react(elId,[
+    safeReact(elId,[
       {type:'bar',orientation:'h',x:s.map(r=>r[field]),y:s.map(r=>r.posteam),marker:{color:s.map(r=>r.posteam===team?color:'#1e2a4a')},hovertemplate:'%{y}: %{x:.1f}%<extra></extra>'},
       {type:'scatter',mode:'lines',name:`Avg (${a.toFixed(1)}%)`,x:[a,a],y:[s[0]?.posteam,s[s.length-1]?.posteam],line:{color,dash:'dot',width:1.5}}
     ],{...L,showlegend:true,margin:{t:10,r:20,b:40,l:50},xaxis:{...L.xaxis,title:label,ticksuffix:'%'},yaxis:{...L.yaxis,autorange:'reversed'}},CFG);
@@ -430,7 +435,7 @@ function drawSRZone(){
   const zoneVal=(arr,t,z)=>{const r=arr.find(r=>r.posteam===t&&r.field_zone===z);return r?+(r[metric]*scale).toFixed(dec):null;};
   const lgVal  =(arr,z)=>{const rows=arr.filter(r=>r.field_zone===z);return rows.length?+(rows.reduce((s,r)=>s+r[metric],0)/rows.length*scale).toFixed(dec):null;};
   const ht=`%{x}: <b>%{y:.${dec}f}${suffix}</b><extra></extra>`;
-  Plotly.react('chart-sr-zone',[
+  safeReact('chart-sr-zone',[
     {type:'scatter',mode:'lines+markers',x:ZONE_ORDER,y:ZONE_ORDER.map(z=>zoneVal(passRows,team,z)),name:`${team} pass`,line:{color:'#5b8dee',width:2.5},marker:{size:8},hovertemplate:ht},
     {type:'scatter',mode:'lines+markers',x:ZONE_ORDER,y:ZONE_ORDER.map(z=>zoneVal(rushRows,team,z)),name:`${team} rush`,line:{color:'#3ecf8e',width:2.5},marker:{size:8},hovertemplate:ht},
     {type:'scatter',mode:'lines+markers',x:ZONE_ORDER,y:ZONE_ORDER.map(z=>lgVal(passRows,z)),name:'Lg avg pass',line:{color:'#5b8dee',width:1.2,dash:'dot'},marker:{size:5},hovertemplate:ht},
@@ -451,12 +456,12 @@ function drawFormation(){
     marker:{color:FORM_COLORS[f]},
     hovertemplate:`%{x} ${f}: %{y:.1f}%<extra></extra>`
   }));
-  Plotly.react('chart-formation-stack',traces,{...L,barmode:'stack',showlegend:true,
+  safeReact('chart-formation-stack',traces,{...L,barmode:'stack',showlegend:true,
     yaxis:{...L.yaxis,ticksuffix:'%',title:'Usage %'},
     legend:{bgcolor:'transparent',font:{color:'#8888aa'},orientation:'h',y:-0.18}},CFG);
 
   const tfRows=DATA.formation.filter(r=>Number(r.season)===Number(season)&&r.posteam===team&&r.plays>=10).sort((a,b)=>b.epa-a.epa);
-  Plotly.react('chart-formation-epa',[{
+  safeReact('chart-formation-epa',[{
     type:'bar',orientation:'h',
     x:tfRows.map(r=>r.epa),y:tfRows.map(r=>`${r.formation} (${r.usage_pct?.toFixed(0)}%)`),
     marker:{color:tfRows.map(r=>FORM_COLORS[r.formation]||'#5b8dee')},
@@ -477,7 +482,7 @@ function drawDownDist(){
   const makeHM=(elId,getVal)=>{
     const z=[1,2,3,4].map(d=>DIST_ORDER.map(dist=>{const v=getVal(d,dist);return v!==null?+(v*scale).toFixed(isRate?1:3):null;}));
     const text=z.map(row=>row.map(v=>v!==null?v+(isRate?'%':''):''));
-    Plotly.react(elId,[{type:'heatmap',x:DIST_ORDER,y:[1,2,3,4].map(d=>`Down ${d}`),z,text,texttemplate:'%{text}',
+    safeReact(elId,[{type:'heatmap',x:DIST_ORDER,y:[1,2,3,4].map(d=>`Down ${d}`),z,text,texttemplate:'%{text}',
       colorscale:metric==='epa'?RDYLGN:BLUE,
       zmin:metric==='epa'?-0.3:(isRate?30:0),zmax:metric==='epa'?0.5:(isRate?95:1),
       hovertemplate:`%{y} / %{x}: <b>%{z}${suffix}</b><extra></extra>`,
@@ -502,7 +507,7 @@ function drawZone(){
   const teamZ  =[ZONE_ORDER.map(z=>{const r=teamRows.find(r=>r.field_zone===z);return r?+(r[metric]*scale).toFixed(isRate?1:3):null;})];
   const leagueZ=[ZONE_ORDER.map(z=>{const rows=allRows.filter(r=>r.field_zone===z);return rows.length?+(rows.reduce((s,r)=>s+r[metric],0)/rows.length*scale).toFixed(isRate?1:3):null;})];
   const z=[...teamZ,...leagueZ],text=z.map(row=>row.map(v=>v!==null?v+suffix:''));
-  Plotly.react('chart-zone',[{type:'heatmap',x:ZONE_ORDER,y:[team,'League avg'],z,text,texttemplate:'%{text}',
+  safeReact('chart-zone',[{type:'heatmap',x:ZONE_ORDER,y:[team,'League avg'],z,text,texttemplate:'%{text}',
     colorscale:metric==='epa'?RDYLGN:BLUE,zmin:metric==='epa'?-0.3:30,zmax:metric==='epa'?0.5:90,
     hovertemplate:'%{y} · %{x}: <b>%{z}'+suffix+'</b><extra></extra>',
     showscale:true,colorbar:{ticksuffix:suffix,tickfont:{color:'#8888aa'},outlinewidth:0}
@@ -510,7 +515,7 @@ function drawZone(){
 
   const teamOrder=DATA.summary.filter(r=>Number(r.season)===Number(season)).sort((a,b)=>b.pass_rate_pct-a.pass_rate_pct).map(r=>r.posteam);
   const zAll=teamOrder.map(t=>ZONE_ORDER.map(z=>{const r=allRows.find(r=>r.posteam===t&&r.field_zone===z);return r?+(r.pass_rate*100).toFixed(1):null;}));
-  Plotly.react('chart-zone-all',[{type:'heatmap',x:ZONE_ORDER,y:teamOrder,z:zAll,text:zAll.map(row=>row.map(v=>v!==null?v+'%':'')),
+  safeReact('chart-zone-all',[{type:'heatmap',x:ZONE_ORDER,y:teamOrder,z:zAll,text:zAll.map(row=>row.map(v=>v!==null?v+'%':'')),
     texttemplate:'%{text}',colorscale:BLUE,zmin:30,zmax:90,
     hovertemplate:'%{y} · %{x}: <b>%{z:.1f}%</b><extra></extra>',
     showscale:true,colorbar:{ticksuffix:'%',tickfont:{color:'#8888aa'},outlinewidth:0}
@@ -529,7 +534,7 @@ function drawScript(){
   const teamY  =SCRIPT_ORDER.map(s=>{const r=teamRows.find(r=>r.game_script===s);return r?+(r[metric]*scale).toFixed(dec):null;});
   const leagueY=SCRIPT_ORDER.map(s=>{const rows=allRows.filter(r=>r.game_script===s);return rows.length?+(rows.reduce((sum,r)=>sum+r[metric],0)/rows.length*scale).toFixed(dec):null;});
   const ht=`%{x}: <b>%{y:.${dec}f}${suffix}</b><extra></extra>`;
-  Plotly.react('chart-script',[
+  safeReact('chart-script',[
     {type:'scatter',mode:'lines+markers',x:SCRIPT_ORDER,y:teamY,name:team,line:{color:'#5b8dee',width:2.5},marker:{size:8,color:'#5b8dee'},hovertemplate:ht},
     {type:'scatter',mode:'lines+markers',x:SCRIPT_ORDER,y:leagueY,name:'League avg',line:{color:'#f0a84a',width:1.5,dash:'dot'},marker:{size:6,color:'#f0a84a'},hovertemplate:ht}
   ],{...L,showlegend:true,
@@ -543,7 +548,7 @@ function drawTrend(){
   const{team}=state;
   const tr=SEASONS.map(s=>DATA.summary.find(r=>r.posteam===team&&r.season===s)||{});
   const lr=SEASONS.map(s=>({pass_rate_pct:lgAvg('pass_rate_pct',s),run_rate_pct:lgAvg('run_rate_pct',s),epa_per_pass:lgAvg('epa_per_pass',s),epa_per_rush:lgAvg('epa_per_rush',s),pass_success_rate_pct:lgAvg('pass_success_rate_pct',s),rush_success_rate_pct:lgAvg('rush_success_rate_pct',s)}));
-  const tc=(elId,field,suffix,dec)=>Plotly.react(elId,[
+  const tc=(elId,field,suffix,dec)=>safeReact(elId,[
     {type:'scatter',mode:'lines+markers',x:SEASONS,y:tr.map(r=>r[field]??null),name:team,line:{color:'#5b8dee',width:2.5},marker:{size:10,color:'#5b8dee'},hovertemplate:`%{x}: <b>%{y:.${dec}f}${suffix}</b><extra></extra>`},
     {type:'scatter',mode:'lines+markers',x:SEASONS,y:lr.map(r=>r[field]),name:'League avg',line:{color:'#f0a84a',dash:'dot',width:1.5},marker:{size:7,color:'#f0a84a'},hovertemplate:`Avg %{x}: <b>%{y:.${dec}f}${suffix}</b><extra></extra>`}
   ],{...L,showlegend:true,yaxis:{...L.yaxis,ticksuffix:suffix},xaxis:{...L.xaxis,tickvals:SEASONS,ticktext:SEASONS.map(String)},margin:{t:10,r:20,b:50,l:60}},CFG);
@@ -593,9 +598,14 @@ bindToggle('sr-zone-toggle','srZoneMetric', drawSRZone);
   try{
     await loadAll();
     document.getElementById('loading').style.display='none';
-    renderAll();
+    try{
+      renderAll();
+    }catch(chartErr){
+      console.error('Chart error:', chartErr);
+      document.getElementById('tab-overview').innerHTML='<div style="color:#f06a6a;font-family:monospace;padding:2rem;">Chart error: '+chartErr.message+'</div>';
+    }
   }catch(err){
-    document.getElementById('loading').innerHTML=`<p style="color:#f06a6a;font-family:monospace;text-align:center;max-width:500px;">Error: ${err.message}<br><br>Make sure all 6 export_*.csv files are in the same folder as index.html<br>and open via a local server:<br><br><code>python -m http.server 8000</code></p>`;
+    document.getElementById('loading').innerHTML='<p style="color:#f06a6a;font-family:monospace;padding:2rem;">Load error: '+err.message+'</p>';
   }
 })();
 </script>
