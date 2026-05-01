@@ -9,23 +9,15 @@
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
-    --bg: #0a0a0f;
-    --surface: #13131a;
-    --surface2: #1c1c26;
-    --border: #2a2a38;
-    --border2: #3a3a50;
-    --text: #e8e8f0;
-    --text2: #8888aa;
-    --text3: #55556a;
-    --accent: #5b8dee;
-    --accent2: #3d6dd4;
-    --green: #3ecf8e;
-    --red: #f06a6a;
-    --amber: #f0a84a;
-    --mono: 'DM Mono', monospace;
-    --sans: 'DM Sans', sans-serif;
+    --bg: #0a0a0f; --surface: #13131a; --surface2: #1c1c26;
+    --border: #2a2a38; --border2: #3a3a50;
+    --text: #e8e8f0; --text2: #8888aa; --text3: #55556a;
+    --accent: #5b8dee; --accent2: #3d6dd4;
+    --green: #3ecf8e; --red: #f06a6a; --amber: #f0a84a;
+    --mono: 'DM Mono', monospace; --sans: 'DM Sans', sans-serif;
   }
-  body { background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 14px; min-height: 100vh; line-height: 1.5; }
+  *, body { background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 14px; min-height: 100vh; line-height: 1.5; }
+  body { background: var(--bg); }
 
   header { border-bottom: 1px solid var(--border); padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 56px; position: sticky; top: 0; background: var(--bg); z-index: 100; }
   .logo { font-family: var(--mono); font-size: 13px; color: var(--text2); letter-spacing: 0.05em; }
@@ -42,16 +34,16 @@
   .seg-control button.active { background: var(--accent2); color: #fff; }
   .seg-control button:hover:not(.active) { background: var(--surface2); color: var(--text); }
 
-  .stat-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; border-bottom: 1px solid var(--border); background: var(--border); }
-  .stat-card { background: var(--bg); padding: 1.2rem 1.5rem; display: flex; flex-direction: column; gap: 4px; }
-  .stat-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; color: var(--text3); text-transform: uppercase; }
-  .stat-value { font-size: 26px; font-weight: 600; letter-spacing: -0.02em; line-height: 1; }
-  .stat-delta { font-family: var(--mono); font-size: 11px; color: var(--text2); }
+  .stat-bar { display: grid; grid-template-columns: repeat(8, 1fr); gap: 1px; border-bottom: 1px solid var(--border); background: var(--border); }
+  .stat-card { background: var(--bg); padding: 1rem 1.1rem; display: flex; flex-direction: column; gap: 3px; }
+  .stat-label { font-family: var(--mono); font-size: 9px; letter-spacing: 0.1em; color: var(--text3); text-transform: uppercase; }
+  .stat-value { font-size: 20px; font-weight: 600; letter-spacing: -0.02em; line-height: 1; }
+  .stat-delta { font-family: var(--mono); font-size: 10px; color: var(--text2); }
   .stat-delta.pos { color: var(--green); }
   .stat-delta.neg { color: var(--red); }
 
-  .tab-bar { display: flex; border-bottom: 1px solid var(--border); padding: 0 2rem; background: var(--bg); }
-  .tab-btn { background: transparent; border: none; border-bottom: 2px solid transparent; color: var(--text2); font-family: var(--sans); font-size: 13px; padding: 12px 18px; cursor: pointer; transition: all 0.15s; margin-bottom: -1px; }
+  .tab-bar { display: flex; border-bottom: 1px solid var(--border); padding: 0 2rem; background: var(--bg); overflow-x: auto; }
+  .tab-btn { background: transparent; border: none; border-bottom: 2px solid transparent; color: var(--text2); font-family: var(--sans); font-size: 13px; padding: 12px 16px; cursor: pointer; transition: all 0.15s; margin-bottom: -1px; white-space: nowrap; }
   .tab-btn:hover { color: var(--text); }
   .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
 
@@ -62,23 +54,24 @@
   .chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
   .chart-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1.25rem; overflow: hidden; }
   .chart-card.full { grid-column: 1 / -1; }
-  .chart-title { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; color: var(--text2); text-transform: uppercase; margin-bottom: 1rem; }
-  .chart-title span { color: var(--accent); margin-left: 6px; }
+  .chart-title { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; color: var(--text2); text-transform: uppercase; margin-bottom: 1rem; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .chart-title span { color: var(--accent); }
+
+  .metric-toggle { display: flex; gap: 0; border: 1px solid var(--border2); border-radius: 4px; overflow: hidden; margin-left: auto; }
+  .metric-toggle button { background: transparent; border: none; border-right: 1px solid var(--border2); color: var(--text2); font-family: var(--mono); font-size: 10px; padding: 3px 8px; cursor: pointer; transition: all 0.12s; }
+  .metric-toggle button:last-child { border-right: none; }
+  .metric-toggle button.active { background: var(--surface2); color: var(--text); }
 
   #loading { position: fixed; inset: 0; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; z-index: 999; }
   .spinner { width: 32px; height: 32px; border: 2px solid var(--border2); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
   #loading p { font-family: var(--mono); font-size: 12px; color: var(--text2); }
-
-  footer { border-top: 1px solid var(--border); padding: 1rem 2rem; font-family: var(--mono); font-size: 11px; color: var(--text3); display: flex; gap: 16px; }
+  footer { border-top: 1px solid var(--border); padding: 1rem 2rem; font-family: var(--mono); font-size: 11px; color: var(--text3); display: flex; gap: 16px; flex-wrap: wrap; }
 </style>
 </head>
 <body>
 
-<div id="loading">
-  <div class="spinner"></div>
-  <p>loading nflverse data...</p>
-</div>
+<div id="loading"><div class="spinner"></div><p>loading nflverse data...</p></div>
 
 <header>
   <div class="logo">nfl.<span>tendency</span></div>
@@ -93,30 +86,21 @@
 </header>
 
 <div class="stat-bar">
-  <div class="stat-card">
-    <div class="stat-label">Pass rate</div>
-    <div class="stat-value" id="s-pass">—</div>
-    <div class="stat-delta" id="s-pass-d">vs league avg</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-label">Shotgun rate</div>
-    <div class="stat-value" id="s-shotgun">—</div>
-    <div class="stat-delta" id="s-shotgun-d">vs league avg</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-label">EPA / play</div>
-    <div class="stat-value" id="s-epa">—</div>
-    <div class="stat-delta" id="s-epa-d">vs league avg</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-label">No-huddle rate</div>
-    <div class="stat-value" id="s-nohuddle">—</div>
-    <div class="stat-delta" id="s-nohuddle-d">vs league avg</div>
-  </div>
+  <div class="stat-card"><div class="stat-label">Pass rate</div><div class="stat-value" id="s-pass">—</div><div class="stat-delta" id="s-pass-d">vs avg</div></div>
+  <div class="stat-card"><div class="stat-label">Run rate</div><div class="stat-value" id="s-run">—</div><div class="stat-delta" id="s-run-d">vs avg</div></div>
+  <div class="stat-card"><div class="stat-label">EPA / pass</div><div class="stat-value" id="s-epa-pass">—</div><div class="stat-delta" id="s-epa-pass-d">vs avg</div></div>
+  <div class="stat-card"><div class="stat-label">EPA / rush</div><div class="stat-value" id="s-epa-rush">—</div><div class="stat-delta" id="s-epa-rush-d">vs avg</div></div>
+  <div class="stat-card"><div class="stat-label">Pass success</div><div class="stat-value" id="s-psr">—</div><div class="stat-delta" id="s-psr-d">vs avg</div></div>
+  <div class="stat-card"><div class="stat-label">Rush success</div><div class="stat-value" id="s-rsr">—</div><div class="stat-delta" id="s-rsr-d">vs avg</div></div>
+  <div class="stat-card"><div class="stat-label">Shotgun rate</div><div class="stat-value" id="s-shotgun">—</div><div class="stat-delta" id="s-shotgun-d">vs avg</div></div>
+  <div class="stat-card"><div class="stat-label">No-huddle</div><div class="stat-value" id="s-nohuddle">—</div><div class="stat-delta" id="s-nohuddle-d">vs avg</div></div>
 </div>
 
 <div class="tab-bar">
   <button class="tab-btn active" data-tab="overview">League overview</button>
+  <button class="tab-btn" data-tab="epa">EPA breakdown</button>
+  <button class="tab-btn" data-tab="success">Success rate</button>
+  <button class="tab-btn" data-tab="formation">Formations</button>
   <button class="tab-btn" data-tab="downdist">Down & distance</button>
   <button class="tab-btn" data-tab="zone">Field zone</button>
   <button class="tab-btn" data-tab="script">Game script</button>
@@ -124,339 +108,489 @@
 </div>
 
 <main>
+
+  <!-- OVERVIEW -->
   <div class="tab-panel active" id="tab-overview">
     <div class="chart-grid">
       <div class="chart-card full">
-        <div class="chart-title">Pass rate — all 32 teams <span id="lbl-overview-season"></span></div>
-        <div id="chart-league-pass" style="height:420px;"></div>
+        <div class="chart-title">Pass rate vs run rate — all 32 teams <span id="lbl-ov1"></span></div>
+        <div id="chart-pass-run" style="height:460px;"></div>
       </div>
       <div class="chart-card full">
-        <div class="chart-title">Shotgun rate — all 32 teams <span id="lbl-overview-season2"></span></div>
-        <div id="chart-league-shotgun" style="height:420px;"></div>
+        <div class="chart-title">Shotgun & no-huddle usage — all 32 teams <span id="lbl-ov2"></span></div>
+        <div id="chart-formation-overview" style="height:460px;"></div>
       </div>
     </div>
   </div>
 
-  <div class="tab-panel" id="tab-downdist">
+  <!-- EPA -->
+  <div class="tab-panel" id="tab-epa">
     <div class="chart-grid">
       <div class="chart-card full">
-        <div class="chart-title">Pass rate by down & distance <span id="lbl-dd"></span></div>
-        <div id="chart-dd" style="height:380px;"></div>
+        <div class="chart-title">EPA/pass vs EPA/rush — all teams <span id="lbl-epa-sc"></span><small style="color:var(--text3);font-family:var(--mono);font-size:9px;margin-left:6px;">color = pass rate</small></div>
+        <div id="chart-epa-scatter" style="height:500px;"></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">EPA per pass — all teams <span id="lbl-epa-p"></span></div>
+        <div id="chart-epa-pass-bar" style="height:500px;"></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">EPA per rush — all teams <span id="lbl-epa-r"></span></div>
+        <div id="chart-epa-rush-bar" style="height:500px;"></div>
       </div>
     </div>
   </div>
 
+  <!-- SUCCESS -->
+  <div class="tab-panel" id="tab-success">
+    <div class="chart-grid">
+      <div class="chart-card">
+        <div class="chart-title">Pass success rate — all teams <span id="lbl-psr"></span></div>
+        <div id="chart-pass-sr" style="height:500px;"></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Rush success rate — all teams <span id="lbl-rsr"></span></div>
+        <div id="chart-rush-sr" style="height:500px;"></div>
+      </div>
+      <div class="chart-card full">
+        <div class="chart-title">Pass vs rush by field zone <span id="lbl-sr-zone"></span>
+          <div class="metric-toggle" id="sr-zone-toggle">
+            <button class="active" data-metric="success">Success rate</button>
+            <button data-metric="epa">EPA</button>
+          </div>
+        </div>
+        <div id="chart-sr-zone" style="height:340px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FORMATIONS -->
+  <div class="tab-panel" id="tab-formation">
+    <div class="chart-grid">
+      <div class="chart-card full">
+        <div class="chart-title">Formation usage % — all 32 teams <span id="lbl-form-all"></span></div>
+        <div id="chart-formation-stack" style="height:540px;"></div>
+      </div>
+      <div class="chart-card full">
+        <div class="chart-title">EPA by formation — <span id="lbl-form-team"></span></div>
+        <div id="chart-formation-epa" style="height:300px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DOWN & DISTANCE -->
+  <div class="tab-panel" id="tab-downdist">
+    <div class="chart-grid">
+      <div class="chart-card">
+        <div class="chart-title">Selected team <span id="lbl-dd-team"></span>
+          <div class="metric-toggle" id="dd-toggle">
+            <button class="active" data-metric="pass_rate">Pass %</button>
+            <button data-metric="epa">EPA</button>
+            <button data-metric="success">Success</button>
+          </div>
+        </div>
+        <div id="chart-dd" style="height:360px;"></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">League average <span id="lbl-dd-lg"></span></div>
+        <div id="chart-dd-league" style="height:360px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FIELD ZONE -->
   <div class="tab-panel" id="tab-zone">
     <div class="chart-grid">
       <div class="chart-card full">
-        <div class="chart-title">Pass rate by field zone <span id="lbl-zone"></span></div>
-        <div id="chart-zone" style="height:280px;"></div>
+        <div class="chart-title">Team vs league avg <span id="lbl-zone-team"></span>
+          <div class="metric-toggle" id="zone-toggle">
+            <button class="active" data-metric="pass_rate">Pass %</button>
+            <button data-metric="epa">EPA</button>
+            <button data-metric="success">Success</button>
+          </div>
+        </div>
+        <div id="chart-zone" style="height:240px;"></div>
+      </div>
+      <div class="chart-card full">
+        <div class="chart-title">Pass rate by field zone — all 32 teams <span id="lbl-zone-all"></span></div>
+        <div id="chart-zone-all" style="height:520px;"></div>
       </div>
     </div>
   </div>
 
+  <!-- GAME SCRIPT -->
   <div class="tab-panel" id="tab-script">
     <div class="chart-grid">
       <div class="chart-card full">
-        <div class="chart-title">Pass rate by game script <span id="lbl-script"></span></div>
-        <div id="chart-script" style="height:400px;"></div>
+        <div class="chart-title">Tendency by game script <span id="lbl-script"></span>
+          <div class="metric-toggle" id="script-toggle">
+            <button class="active" data-metric="pass_rate">Pass %</button>
+            <button data-metric="epa">EPA</button>
+            <button data-metric="success">Success</button>
+          </div>
+        </div>
+        <div id="chart-script" style="height:440px;"></div>
       </div>
     </div>
   </div>
 
+  <!-- TREND -->
   <div class="tab-panel" id="tab-trend">
     <div class="chart-grid">
-      <div class="chart-card">
-        <div class="chart-title">Pass rate trend <span id="lbl-trend-team"></span></div>
-        <div id="chart-trend-pass" style="height:300px;"></div>
-      </div>
-      <div class="chart-card">
-        <div class="chart-title">Shotgun rate trend <span id="lbl-trend-team2"></span></div>
-        <div id="chart-trend-shotgun" style="height:300px;"></div>
-      </div>
-      <div class="chart-card">
-        <div class="chart-title">EPA / play trend <span id="lbl-trend-team3"></span></div>
-        <div id="chart-trend-epa" style="height:300px;"></div>
-      </div>
-      <div class="chart-card">
-        <div class="chart-title">No-huddle rate trend <span id="lbl-trend-team4"></span></div>
-        <div id="chart-trend-nohuddle" style="height:300px;"></div>
-      </div>
+      <div class="chart-card"><div class="chart-title">Pass rate <span id="lt1"></span></div><div id="chart-trend-pass" style="height:280px;"></div></div>
+      <div class="chart-card"><div class="chart-title">Run rate <span id="lt2"></span></div><div id="chart-trend-run" style="height:280px;"></div></div>
+      <div class="chart-card"><div class="chart-title">EPA / pass <span id="lt3"></span></div><div id="chart-trend-epa-pass" style="height:280px;"></div></div>
+      <div class="chart-card"><div class="chart-title">EPA / rush <span id="lt4"></span></div><div id="chart-trend-epa-rush" style="height:280px;"></div></div>
+      <div class="chart-card"><div class="chart-title">Pass success rate <span id="lt5"></span></div><div id="chart-trend-psr" style="height:280px;"></div></div>
+      <div class="chart-card"><div class="chart-title">Rush success rate <span id="lt6"></span></div><div id="chart-trend-rsr" style="height:280px;"></div></div>
     </div>
   </div>
+
 </main>
 
 <footer>
   <span>data: nflverse play-by-play · 2023–2025</span>
   <span>excludes garbage time (wp 10–90%)</span>
   <span>regular season only</span>
+  <span>success = 40%+ 1st · 60%+ 2nd · conversion 3rd/4th</span>
 </footer>
 
 <script>
-const PLOTLY_LAYOUT_BASE = {
-  paper_bgcolor: 'transparent',
-  plot_bgcolor:  'transparent',
-  font:          { family: 'DM Sans, sans-serif', color: '#8888aa', size: 12 },
-  margin:        { t: 10, r: 20, b: 60, l: 60 },
-  colorway:      ['#5b8dee','#3ecf8e','#f0a84a','#f06a6a','#a78bfa'],
-  xaxis: { gridcolor: '#2a2a38', zerolinecolor: '#3a3a50', tickfont: { color: '#8888aa' } },
-  yaxis: { gridcolor: '#2a2a38', zerolinecolor: '#3a3a50', tickfont: { color: '#8888aa' } },
-  legend: { bgcolor: 'transparent', font: { color: '#8888aa' } },
-};
-const PLOTLY_CONFIG = { displayModeBar: false, responsive: true };
-
+const SEASONS      = [2023,2024,2025];
 const ZONE_ORDER   = ['1. Own End (75-100)','2. Own Mid (50-74)','3. Opp Mid (25-49)','4. Red Zone (10-24)','5. Goal-to-Go (<10)'];
 const SCRIPT_ORDER = ['Trailing (8+)','Trailing (1-7)','Tied','Leading (1-7)','Leading (8+)'];
 const DIST_ORDER   = ['Short (1-2)','Med-Short (3-5)','Medium (6-9)','Long (10+)'];
-const SEASONS      = [2023, 2024, 2025];
+const FORM_ORDER   = ['Under Center','No-Huddle UC','Pistol','Shotgun','No-Huddle Shotgun','Empty','Wildcat'];
+const FORM_COLORS  = {'Under Center':'#2d3748','No-Huddle UC':'#553c7b','Pistol':'#2b6cb0','Shotgun':'#2b9348','No-Huddle Shotgun':'#48bb78','Empty':'#f6ad55','Wildcat':'#fc4444'};
+
+const L = {
+  paper_bgcolor:'transparent', plot_bgcolor:'transparent',
+  font:{family:'DM Sans, sans-serif',color:'#8888aa',size:12},
+  margin:{t:10,r:20,b:60,l:60},
+  xaxis:{gridcolor:'#2a2a38',zerolinecolor:'#3a3a50',tickfont:{color:'#8888aa'}},
+  yaxis:{gridcolor:'#2a2a38',zerolinecolor:'#3a3a50',tickfont:{color:'#8888aa'}},
+  legend:{bgcolor:'transparent',font:{color:'#8888aa'}},
+};
+const CFG   = {displayModeBar:false,responsive:true};
+const BLUE  = [[0,'#0a1628'],[0.3,'#0C447C'],[0.6,'#185FA5'],[0.8,'#5b8dee'],[1,'#b5d4f4']];
+const RDYLGN= [[0,'#d62728'],[0.5,'#f0a84a'],[1,'#3ecf8e']];
 
 let DATA  = {};
-let state = { team: 'KC', season: 2025 };
+let state = {team:'KC',season:2025,ddMetric:'pass_rate',zoneMetric:'pass_rate',scriptMetric:'pass_rate',srZoneMetric:'success'};
 
 function parseCSV(text) {
-  const lines   = text.trim().split('\n');
-  const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
-  return lines.slice(1).map(line => {
-    const vals = line.split(',');
-    const obj  = {};
-    headers.forEach((h, i) => {
-      const v = (vals[i] || '').trim().replace(/"/g, '');
-      obj[h]  = isNaN(v) || v === '' ? v : Number(v);
-    });
+  const lines=text.trim().split('\n'), hdrs=lines[0].split(',').map(h=>h.trim().replace(/"/g,''));
+  return lines.slice(1).map(line=>{
+    const vals=line.split(','),obj={};
+    hdrs.forEach((h,i)=>{const v=(vals[i]||'').trim().replace(/"/g,'');obj[h]=isNaN(v)||v===''?v:Number(v);});
     return obj;
   });
 }
+async function loadCSV(p){const r=await fetch(p);if(!r.ok)throw new Error(`Cannot load ${p} (${r.status})`);return parseCSV(await r.text());}
 
-async function loadCSV(path) {
-  const r = await fetch(path);
-  if (!r.ok) throw new Error(`Could not load ${path} (${r.status})`);
-  return parseCSV(await r.text());
-}
-
-async function loadAll() {
-  const [summary, zone, dd, script, epa] = await Promise.all([
+async function loadAll(){
+  const [summary,zone,dd,script,formation,prZone]=await Promise.all([
     loadCSV('export_team_season_summary.csv'),
-    loadCSV('export_zone_pass_rate.csv'),
-    loadCSV('export_down_dist_pass_rate.csv'),
-    loadCSV('export_game_script_pass_rate.csv'),
-    loadCSV('export_epa_formation.csv'),
+    loadCSV('export_zone_stats.csv'),
+    loadCSV('export_down_dist_stats.csv'),
+    loadCSV('export_game_script_stats.csv'),
+    loadCSV('export_formation_stats.csv'),
+    loadCSV('export_pass_rush_zone.csv'),
   ]);
-  DATA = { summary, zone, dd, script, epa };
-
-  const teams = [...new Set(summary.map(r => r.posteam))].sort();
-  const sel   = document.getElementById('team-select');
-  teams.forEach(t => {
-    const opt      = document.createElement('option');
-    opt.value      = t;
-    opt.textContent = t;
-    sel.appendChild(opt);
-  });
-  sel.value = state.team;
+  DATA={summary,zone,dd,script,formation,prZone};
+  const teams=[...new Set(summary.map(r=>r.posteam))].sort();
+  const sel=document.getElementById('team-select');
+  teams.forEach(t=>{const o=document.createElement('option');o.value=t;o.textContent=t;sel.appendChild(o);});
+  sel.value=state.team;
 }
 
-function getTeamSeason(team, season) {
-  return DATA.summary.find(r => r.posteam === team && r.season === season) || {};
+const getRow =(team,season)=>DATA.summary.find(r=>r.posteam===team&&r.season===season)||{};
+const lgAvg  =(field,season)=>{const rows=DATA.summary.filter(r=>r.season===season);return rows.reduce((s,r)=>s+(r[field]||0),0)/rows.length;};
+const fmtPct =(v)=>isNaN(v)?'—':v.toFixed(1)+'%';
+const fmtEPA =(v)=>isNaN(v)?'—':(v>=0?'+':'')+v.toFixed(3);
+
+function setDelta(id,val,avgVal,suffix,dec){
+  const el=document.getElementById(id),d=val-avgVal;
+  el.textContent=(d>=0?'+':'')+d.toFixed(dec)+suffix+' vs avg';
+  el.className='stat-delta '+(d>=0?'pos':'neg');
 }
-function leagueAvg(field, season) {
-  const rows = DATA.summary.filter(r => r.season === season);
-  return rows.reduce((s, r) => s + (r[field] || 0), 0) / rows.length;
+
+function updateStats(){
+  const{team,season}=state,r=getRow(team,season);
+  if(!r.pass_rate_pct)return;
+  document.getElementById('s-pass').textContent     =fmtPct(r.pass_rate_pct);
+  document.getElementById('s-run').textContent      =fmtPct(r.run_rate_pct);
+  document.getElementById('s-epa-pass').textContent =fmtEPA(r.epa_per_pass);
+  document.getElementById('s-epa-rush').textContent =fmtEPA(r.epa_per_rush);
+  document.getElementById('s-psr').textContent      =fmtPct(r.pass_success_rate_pct);
+  document.getElementById('s-rsr').textContent      =fmtPct(r.rush_success_rate_pct);
+  document.getElementById('s-shotgun').textContent  =fmtPct(r.shotgun_rate_pct);
+  document.getElementById('s-nohuddle').textContent =fmtPct(r.no_huddle_rate_pct);
+  setDelta('s-pass-d',    r.pass_rate_pct,         lgAvg('pass_rate_pct',season),         '%',1);
+  setDelta('s-run-d',     r.run_rate_pct,          lgAvg('run_rate_pct',season),          '%',1);
+  setDelta('s-epa-pass-d',r.epa_per_pass,          lgAvg('epa_per_pass',season),          '',3);
+  setDelta('s-epa-rush-d',r.epa_per_rush,          lgAvg('epa_per_rush',season),          '',3);
+  setDelta('s-psr-d',     r.pass_success_rate_pct, lgAvg('pass_success_rate_pct',season), '%',1);
+  setDelta('s-rsr-d',     r.rush_success_rate_pct, lgAvg('rush_success_rate_pct',season), '%',1);
+  setDelta('s-shotgun-d', r.shotgun_rate_pct,      lgAvg('shotgun_rate_pct',season),      '%',1);
+  setDelta('s-nohuddle-d',r.no_huddle_rate_pct,    lgAvg('no_huddle_rate_pct',season),    '%',1);
 }
 
-function updateStats() {
-  const { team, season } = state;
-  const row = getTeamSeason(team, season);
-  if (!row.pass_rate_pct) return;
+// OVERVIEW
+function drawOverview(){
+  const{season,team}=state;
+  const rows=DATA.summary.filter(r=>r.season===season).sort((a,b)=>b.pass_rate_pct-a.pass_rate_pct);
+  const ap=lgAvg('pass_rate_pct',season),ar=lgAvg('run_rate_pct',season);
+  Plotly.react('chart-pass-run',[
+    {type:'bar',name:'Pass rate',x:rows.map(r=>r.posteam),y:rows.map(r=>r.pass_rate_pct),marker:{color:rows.map(r=>r.posteam===team?'#5b8dee':'#1e2a4a')},hovertemplate:'%{x} pass: %{y:.1f}%<extra></extra>'},
+    {type:'bar',name:'Run rate', x:rows.map(r=>r.posteam),y:rows.map(r=>r.run_rate_pct), marker:{color:rows.map(r=>r.posteam===team?'#3ecf8e':'#1a3028')},hovertemplate:'%{x} run: %{y:.1f}%<extra></extra>'},
+    {type:'scatter',mode:'lines',name:`Pass avg (${ap.toFixed(1)}%)`,x:rows.map(r=>r.posteam),y:rows.map(()=>ap),line:{color:'#5b8dee',dash:'dot',width:1.2},hoverinfo:'skip'},
+    {type:'scatter',mode:'lines',name:`Run avg (${ar.toFixed(1)}%)`, x:rows.map(r=>r.posteam),y:rows.map(()=>ar), line:{color:'#3ecf8e',dash:'dot',width:1.2},hoverinfo:'skip'},
+  ],{...L,barmode:'group',showlegend:true,yaxis:{...L.yaxis,ticksuffix:'%',title:'Rate'}},CFG);
 
-  const avgPass     = leagueAvg('pass_rate_pct', season);
-  const avgShotgun  = leagueAvg('shotgun_rate_pct', season);
-  const avgEpa      = leagueAvg('mean_epa', season);
-  const avgNoHuddle = leagueAvg('no_huddle_rate_pct', season);
+  const rows2=DATA.summary.filter(r=>r.season===season).sort((a,b)=>b.shotgun_rate_pct-a.shotgun_rate_pct);
+  Plotly.react('chart-formation-overview',[
+    {type:'bar',name:'Shotgun',  x:rows2.map(r=>r.posteam),y:rows2.map(r=>r.shotgun_rate_pct),  marker:{color:rows2.map(r=>r.posteam===team?'#5b8dee':'#1e2a4a')},hovertemplate:'%{x} shotgun: %{y:.1f}%<extra></extra>'},
+    {type:'bar',name:'No-huddle',x:rows2.map(r=>r.posteam),y:rows2.map(r=>r.no_huddle_rate_pct),marker:{color:rows2.map(r=>r.posteam===team?'#f0a84a':'#3a2a10')},hovertemplate:'%{x} no-huddle: %{y:.1f}%<extra></extra>'},
+  ],{...L,barmode:'group',showlegend:true,yaxis:{...L.yaxis,ticksuffix:'%',title:'Rate'}},CFG);
 
-  document.getElementById('s-pass').textContent     = row.pass_rate_pct.toFixed(1) + '%';
-  document.getElementById('s-shotgun').textContent  = row.shotgun_rate_pct.toFixed(1) + '%';
-  document.getElementById('s-epa').textContent      = (row.mean_epa >= 0 ? '+' : '') + row.mean_epa.toFixed(3);
-  document.getElementById('s-nohuddle').textContent = row.no_huddle_rate_pct.toFixed(1) + '%';
+  document.getElementById('lbl-ov1').textContent=season;
+  document.getElementById('lbl-ov2').textContent=season;
+}
 
-  const setDelta = (id, val, avg, suffix, dec) => {
-    const el = document.getElementById(id);
-    const d  = val - avg;
-    el.textContent = (d >= 0 ? '+' : '') + d.toFixed(dec) + suffix + ' vs league avg';
-    el.className   = 'stat-delta ' + (d >= 0 ? 'pos' : 'neg');
+// EPA
+function drawEPA(){
+  const{season,team}=state;
+  const rows=DATA.summary.filter(r=>r.season===season);
+
+  // Scatter
+  Plotly.react('chart-epa-scatter',rows.map(r=>({
+    type:'scatter',mode:'markers+text',
+    x:[r.epa_per_rush],y:[r.epa_per_pass],
+    text:[r.posteam],textposition:'top center',
+    textfont:{size:10,color:r.posteam===team?'#e8e8f0':'#8888aa'},
+    marker:{size:r.posteam===team?16:10,color:[r.pass_rate_pct],colorscale:'RdYlGn_r',cmin:45,cmax:65,
+      line:{color:r.posteam===team?'#fff':'transparent',width:2},
+      showscale:r===rows[0],colorbar:{title:'Pass rate %',tickfont:{color:'#8888aa'},outlinewidth:0}},
+    name:r.posteam,showlegend:false,
+    hovertemplate:`<b>${r.posteam}</b><br>EPA/pass: %{y:.3f}<br>EPA/rush: %{x:.3f}<br>Pass rate: ${r.pass_rate_pct?.toFixed(1)}%<extra></extra>`
+  })),{...L,showlegend:false,
+    xaxis:{...L.xaxis,title:'EPA per Rush',zeroline:true,zerolinewidth:1},
+    yaxis:{...L.yaxis,title:'EPA per Pass',zeroline:true,zerolinewidth:1},
+    margin:{t:10,r:20,b:60,l:70},
+    shapes:[
+      {type:'line',x0:-0.5,x1:0.5,y0:0,y1:0,line:{color:'#3a3a50',dash:'dot',width:1}},
+      {type:'line',x0:0,x1:0,y0:-0.5,y1:0.5,line:{color:'#3a3a50',dash:'dot',width:1}}
+    ]},CFG);
+
+  const sp=[...rows].sort((a,b)=>b.epa_per_pass-a.epa_per_pass);
+  Plotly.react('chart-epa-pass-bar',[{
+    type:'bar',orientation:'h',x:sp.map(r=>r.epa_per_pass),y:sp.map(r=>r.posteam),
+    marker:{color:sp.map(r=>r.posteam===team?'#5b8dee':'#2a2a50')},
+    hovertemplate:'%{y}: %{x:.3f}<extra></extra>'
+  }],{...L,margin:{t:10,r:20,b:40,l:50},xaxis:{...L.xaxis,title:'EPA per Pass',zeroline:true},yaxis:{...L.yaxis,autorange:'reversed'}},CFG);
+
+  const sr=[...rows].sort((a,b)=>b.epa_per_rush-a.epa_per_rush);
+  Plotly.react('chart-epa-rush-bar',[{
+    type:'bar',orientation:'h',x:sr.map(r=>r.epa_per_rush),y:sr.map(r=>r.posteam),
+    marker:{color:sr.map(r=>r.posteam===team?'#3ecf8e':'#1a3028')},
+    hovertemplate:'%{y}: %{x:.3f}<extra></extra>'
+  }],{...L,margin:{t:10,r:20,b:40,l:50},xaxis:{...L.xaxis,title:'EPA per Rush',zeroline:true},yaxis:{...L.yaxis,autorange:'reversed'}},CFG);
+
+  ['lbl-epa-sc','lbl-epa-p','lbl-epa-r'].forEach(id=>document.getElementById(id).textContent=season);
+}
+
+// SUCCESS
+function drawSuccess(){
+  const{season,team}=state,rows=DATA.summary.filter(r=>r.season===season);
+  const srBar=(elId,field,color,label)=>{
+    const s=[...rows].sort((a,b)=>b[field]-a[field]);
+    const a=rows.reduce((sum,r)=>sum+(r[field]||0),0)/rows.length;
+    Plotly.react(elId,[
+      {type:'bar',orientation:'h',x:s.map(r=>r[field]),y:s.map(r=>r.posteam),marker:{color:s.map(r=>r.posteam===team?color:'#1e2a4a')},hovertemplate:'%{y}: %{x:.1f}%<extra></extra>'},
+      {type:'scatter',mode:'lines',name:`Avg (${a.toFixed(1)}%)`,x:[a,a],y:[s[0]?.posteam,s[s.length-1]?.posteam],line:{color,dash:'dot',width:1.5}}
+    ],{...L,showlegend:true,margin:{t:10,r:20,b:40,l:50},xaxis:{...L.xaxis,title:label,ticksuffix:'%'},yaxis:{...L.yaxis,autorange:'reversed'}},CFG);
   };
-  setDelta('s-pass-d',     row.pass_rate_pct,      avgPass,     '%', 1);
-  setDelta('s-shotgun-d',  row.shotgun_rate_pct,   avgShotgun,  '%', 1);
-  setDelta('s-epa-d',      row.mean_epa,           avgEpa,      '', 3);
-  setDelta('s-nohuddle-d', row.no_huddle_rate_pct, avgNoHuddle, '%', 1);
+  srBar('chart-pass-sr','pass_success_rate_pct','#5b8dee','Pass success rate');
+  srBar('chart-rush-sr','rush_success_rate_pct','#3ecf8e','Rush success rate');
+  drawSRZone();
+  ['lbl-psr','lbl-rsr','lbl-sr-zone'].forEach(id=>document.getElementById(id).textContent=`${team} · ${season}`);
 }
 
-const BLUE_SCALE = [[0,'#0a1628'],[0.3,'#0C447C'],[0.6,'#185FA5'],[0.8,'#5b8dee'],[1,'#b5d4f4']];
-
-function drawLeaguePass() {
-  const { season, team } = state;
-  const rows = DATA.summary.filter(r => r.season === season).sort((a,b) => b.pass_rate_pct - a.pass_rate_pct);
-  const avg  = leagueAvg('pass_rate_pct', season);
-  Plotly.react('chart-league-pass', [
-    { type:'bar', x:rows.map(r=>r.posteam), y:rows.map(r=>r.pass_rate_pct),
-      marker:{ color: rows.map(r => r.posteam === team ? '#5b8dee' : '#2a2a50') },
-      hovertemplate:'%{x}: %{y:.1f}%<extra></extra>' },
-    { type:'scatter', mode:'lines', x:rows.map(r=>r.posteam), y:rows.map(()=>avg),
-      line:{ color:'#f0a84a', dash:'dot', width:1.5 }, name:`League avg (${avg.toFixed(1)}%)`, hoverinfo:'skip' }
-  ], { ...PLOTLY_LAYOUT_BASE, showlegend:true,
-    yaxis:{ ...PLOTLY_LAYOUT_BASE.yaxis, ticksuffix:'%', title:'Pass rate' } }, PLOTLY_CONFIG);
-  document.getElementById('lbl-overview-season').textContent = season;
+function drawSRZone(){
+  const{season,team}=state,metric=state.srZoneMetric;
+  const isRate=metric==='success',scale=isRate?100:1,suffix=isRate?'%':'',dec=isRate?1:3;
+  const passRows=DATA.prZone.filter(r=>r.season===season&&r.play_type==='pass');
+  const rushRows=DATA.prZone.filter(r=>r.season===season&&r.play_type==='run');
+  const zoneVal=(arr,t,z)=>{const r=arr.find(r=>r.posteam===t&&r.field_zone===z);return r?+(r[metric]*scale).toFixed(dec):null;};
+  const lgVal  =(arr,z)=>{const rows=arr.filter(r=>r.field_zone===z);return rows.length?+(rows.reduce((s,r)=>s+r[metric],0)/rows.length*scale).toFixed(dec):null;};
+  const ht=`%{x}: <b>%{y:.${dec}f}${suffix}</b><extra></extra>`;
+  Plotly.react('chart-sr-zone',[
+    {type:'scatter',mode:'lines+markers',x:ZONE_ORDER,y:ZONE_ORDER.map(z=>zoneVal(passRows,team,z)),name:`${team} pass`,line:{color:'#5b8dee',width:2.5},marker:{size:8},hovertemplate:ht},
+    {type:'scatter',mode:'lines+markers',x:ZONE_ORDER,y:ZONE_ORDER.map(z=>zoneVal(rushRows,team,z)),name:`${team} rush`,line:{color:'#3ecf8e',width:2.5},marker:{size:8},hovertemplate:ht},
+    {type:'scatter',mode:'lines+markers',x:ZONE_ORDER,y:ZONE_ORDER.map(z=>lgVal(passRows,z)),name:'Lg avg pass',line:{color:'#5b8dee',width:1.2,dash:'dot'},marker:{size:5},hovertemplate:ht},
+    {type:'scatter',mode:'lines+markers',x:ZONE_ORDER,y:ZONE_ORDER.map(z=>lgVal(rushRows,z)),name:'Lg avg rush',line:{color:'#3ecf8e',width:1.2,dash:'dot'},marker:{size:5},hovertemplate:ht},
+  ],{...L,showlegend:true,xaxis:{...L.xaxis,title:'Field zone'},yaxis:{...L.yaxis,ticksuffix:suffix},margin:{t:10,r:20,b:80,l:60}},CFG);
 }
 
-function drawLeagueShotgun() {
-  const { season, team } = state;
-  const rows = DATA.summary.filter(r => r.season === season).sort((a,b) => b.shotgun_rate_pct - a.shotgun_rate_pct);
-  const avg  = leagueAvg('shotgun_rate_pct', season);
-  Plotly.react('chart-league-shotgun', [
-    { type:'bar', x:rows.map(r=>r.posteam), y:rows.map(r=>r.shotgun_rate_pct),
-      marker:{ color: rows.map(r => r.posteam === team ? '#3ecf8e' : '#1c2e28') },
-      hovertemplate:'%{x}: %{y:.1f}%<extra></extra>' },
-    { type:'scatter', mode:'lines', x:rows.map(r=>r.posteam), y:rows.map(()=>avg),
-      line:{ color:'#f0a84a', dash:'dot', width:1.5 }, name:`League avg (${avg.toFixed(1)}%)`, hoverinfo:'skip' }
-  ], { ...PLOTLY_LAYOUT_BASE, showlegend:true,
-    yaxis:{ ...PLOTLY_LAYOUT_BASE.yaxis, ticksuffix:'%', title:'Shotgun rate' } }, PLOTLY_CONFIG);
-  document.getElementById('lbl-overview-season2').textContent = season;
-}
+// FORMATIONS
+function drawFormation(){
+  const{season,team}=state;
+  const shotgunByTeam={};
+  DATA.formation.filter(r=>r.season===season&&r.formation==='Shotgun').forEach(r=>{shotgunByTeam[r.posteam]=r.usage_pct||0;});
+  const teams=[...new Set(DATA.summary.filter(r=>r.season===season).map(r=>r.posteam))].sort((a,b)=>(shotgunByTeam[b]||0)-(shotgunByTeam[a]||0));
 
-function drawDownDist() {
-  const { team, season } = state;
-  const rows = DATA.dd.filter(r => r.posteam === team && r.season === season);
-  const downs = [1,2,3,4];
-  const z = downs.map(d => DIST_ORDER.map(dist => {
-    const r = rows.find(r => r.down === d && r.dist_bucket === dist);
-    return r ? +(r.pass_rate * 100).toFixed(1) : null;
+  const traces=FORM_ORDER.map(f=>({
+    type:'bar',name:f,x:teams,
+    y:teams.map(t=>{const r=DATA.formation.find(r=>r.season===season&&r.posteam===t&&r.formation===f);return r?r.usage_pct:0;}),
+    marker:{color:FORM_COLORS[f]},
+    hovertemplate:`%{x} ${f}: %{y:.1f}%<extra></extra>`
   }));
-  Plotly.react('chart-dd', [{
-    type:'heatmap', x:DIST_ORDER, y:downs.map(d=>`Down ${d}`), z,
-    text: z.map(row => row.map(v => v !== null ? v.toFixed(1)+'%' : '')),
-    texttemplate:'%{text}', colorscale: BLUE_SCALE, zmin:30, zmax:95,
-    hovertemplate:'Down %{y} / %{x}: <b>%{z:.1f}%</b><extra></extra>',
-    showscale:true, colorbar:{ ticksuffix:'%', tickfont:{color:'#8888aa'}, outlinewidth:0 }
-  }], { ...PLOTLY_LAYOUT_BASE,
-    xaxis:{ ...PLOTLY_LAYOUT_BASE.xaxis, title:'Distance to go' },
-    margin:{ t:10, r:80, b:80, l:80 } }, PLOTLY_CONFIG);
-  document.getElementById('lbl-dd').textContent = `${team} · ${season}`;
+  Plotly.react('chart-formation-stack',traces,{...L,barmode:'stack',showlegend:true,
+    yaxis:{...L.yaxis,ticksuffix:'%',title:'Usage %'},
+    legend:{bgcolor:'transparent',font:{color:'#8888aa'},orientation:'h',y:-0.18}},CFG);
+
+  const tfRows=DATA.formation.filter(r=>r.season===season&&r.posteam===team&&r.plays>=10).sort((a,b)=>b.epa-a.epa);
+  Plotly.react('chart-formation-epa',[{
+    type:'bar',orientation:'h',
+    x:tfRows.map(r=>r.epa),y:tfRows.map(r=>`${r.formation} (${r.usage_pct?.toFixed(0)}%)`),
+    marker:{color:tfRows.map(r=>FORM_COLORS[r.formation]||'#5b8dee')},
+    hovertemplate:'%{y}: EPA=%{x:.3f}<extra></extra>'
+  }],{...L,margin:{t:10,r:20,b:40,l:170},xaxis:{...L.xaxis,title:'EPA per play',zeroline:true}},CFG);
+
+  document.getElementById('lbl-form-all').textContent =season;
+  document.getElementById('lbl-form-team').textContent=`${team} · ${season}`;
 }
 
-function drawZone() {
-  const { team, season } = state;
-  const teamRows = DATA.zone.filter(r => r.posteam === team && r.season === season);
-  const allRows  = DATA.zone.filter(r => r.season === season);
-  const teamZ  = [ZONE_ORDER.map(z => { const r = teamRows.find(r=>r.field_zone===z); return r ? +(r.pass_rate*100).toFixed(1) : null; })];
-  const leagueZ= [ZONE_ORDER.map(z => { const rows=allRows.filter(r=>r.field_zone===z); return +(rows.reduce((s,r)=>s+r.pass_rate,0)/rows.length*100).toFixed(1); })];
-  const z = [...teamZ, ...leagueZ];
-  Plotly.react('chart-zone', [{
-    type:'heatmap', x:ZONE_ORDER, y:[team,'League avg'], z,
-    text: z.map(row=>row.map(v=>v!==null?v.toFixed(1)+'%':'')),
-    texttemplate:'%{text}', colorscale:BLUE_SCALE, zmin:30, zmax:90,
+// DOWN & DISTANCE
+function drawDownDist(){
+  const{team,season}=state,metric=state.ddMetric;
+  const isRate=metric==='pass_rate'||metric==='success',scale=isRate?100:1,suffix=isRate?'%':'';
+  const teamRows=DATA.dd.filter(r=>r.posteam===team&&r.season===season);
+  const lgRows  =DATA.dd.filter(r=>r.season===season);
+
+  const makeHM=(elId,getVal)=>{
+    const z=[1,2,3,4].map(d=>DIST_ORDER.map(dist=>{const v=getVal(d,dist);return v!==null?+(v*scale).toFixed(isRate?1:3):null;}));
+    const text=z.map(row=>row.map(v=>v!==null?v+(isRate?'%':''):''));
+    Plotly.react(elId,[{type:'heatmap',x:DIST_ORDER,y:[1,2,3,4].map(d=>`Down ${d}`),z,text,texttemplate:'%{text}',
+      colorscale:metric==='epa'?RDYLGN:BLUE,
+      zmin:metric==='epa'?-0.3:(isRate?30:0),zmax:metric==='epa'?0.5:(isRate?95:1),
+      hovertemplate:`%{y} / %{x}: <b>%{z}${suffix}</b><extra></extra>`,
+      showscale:true,colorbar:{ticksuffix:suffix,tickfont:{color:'#8888aa'},outlinewidth:0}
+    }],{...L,xaxis:{...L.xaxis,title:'Distance to go'},margin:{t:10,r:80,b:80,l:80}},CFG);
+  };
+
+  makeHM('chart-dd',(d,dist)=>{const r=teamRows.find(r=>r.down===d&&r.dist_bucket===dist);return r?r[metric]:null;});
+  makeHM('chart-dd-league',(d,dist)=>{const rows=lgRows.filter(r=>r.down===d&&r.dist_bucket===dist);return rows.length?rows.reduce((s,r)=>s+r[metric],0)/rows.length:null;});
+
+  document.getElementById('lbl-dd-team').textContent=`${team} · ${season}`;
+  document.getElementById('lbl-dd-lg').textContent  =season;
+}
+
+// FIELD ZONE
+function drawZone(){
+  const{team,season}=state,metric=state.zoneMetric;
+  const isRate=metric==='pass_rate'||metric==='success',scale=isRate?100:1,suffix=isRate?'%':'';
+  const teamRows=DATA.zone.filter(r=>r.posteam===team&&r.season===season);
+  const allRows =DATA.zone.filter(r=>r.season===season);
+
+  const teamZ  =[ZONE_ORDER.map(z=>{const r=teamRows.find(r=>r.field_zone===z);return r?+(r[metric]*scale).toFixed(isRate?1:3):null;})];
+  const leagueZ=[ZONE_ORDER.map(z=>{const rows=allRows.filter(r=>r.field_zone===z);return rows.length?+(rows.reduce((s,r)=>s+r[metric],0)/rows.length*scale).toFixed(isRate?1:3):null;})];
+  const z=[...teamZ,...leagueZ],text=z.map(row=>row.map(v=>v!==null?v+suffix:''));
+  Plotly.react('chart-zone',[{type:'heatmap',x:ZONE_ORDER,y:[team,'League avg'],z,text,texttemplate:'%{text}',
+    colorscale:metric==='epa'?RDYLGN:BLUE,zmin:metric==='epa'?-0.3:30,zmax:metric==='epa'?0.5:90,
+    hovertemplate:'%{y} · %{x}: <b>%{z}'+suffix+'</b><extra></extra>',
+    showscale:true,colorbar:{ticksuffix:suffix,tickfont:{color:'#8888aa'},outlinewidth:0}
+  }],{...L,xaxis:{...L.xaxis,title:'← Own end zone          Opponent end zone →'},margin:{t:10,r:80,b:80,l:110},height:220},CFG);
+
+  const teamOrder=DATA.summary.filter(r=>r.season===season).sort((a,b)=>b.pass_rate_pct-a.pass_rate_pct).map(r=>r.posteam);
+  const zAll=teamOrder.map(t=>ZONE_ORDER.map(z=>{const r=allRows.find(r=>r.posteam===t&&r.field_zone===z);return r?+(r.pass_rate*100).toFixed(1):null;}));
+  Plotly.react('chart-zone-all',[{type:'heatmap',x:ZONE_ORDER,y:teamOrder,z:zAll,text:zAll.map(row=>row.map(v=>v!==null?v+'%':'')),
+    texttemplate:'%{text}',colorscale:BLUE,zmin:30,zmax:90,
     hovertemplate:'%{y} · %{x}: <b>%{z:.1f}%</b><extra></extra>',
-    showscale:true, colorbar:{ ticksuffix:'%', tickfont:{color:'#8888aa'}, outlinewidth:0 }
-  }], { ...PLOTLY_LAYOUT_BASE,
-    xaxis:{ ...PLOTLY_LAYOUT_BASE.xaxis, title:'← Own end zone          Opponent end zone →' },
-    margin:{ t:10, r:80, b:80, l:110 }, height:220 }, PLOTLY_CONFIG);
-  document.getElementById('lbl-zone').textContent = `${team} vs league avg · ${season}`;
+    showscale:true,colorbar:{ticksuffix:'%',tickfont:{color:'#8888aa'},outlinewidth:0}
+  }],{...L,margin:{t:10,r:80,b:80,l:55},xaxis:{...L.xaxis,title:'← Own end zone   Opp →'},yaxis:{...L.yaxis,tickfont:{size:9,color:'#8888aa'}}},CFG);
+
+  document.getElementById('lbl-zone-team').textContent=`${team} vs league avg · ${season}`;
+  document.getElementById('lbl-zone-all').textContent =season;
 }
 
-function drawScript() {
-  const { team, season } = state;
-  const teamRows = DATA.script.filter(r => r.posteam === team && r.season === season);
-  const allRows  = DATA.script.filter(r => r.season === season);
-  const teamY   = SCRIPT_ORDER.map(s => { const r=teamRows.find(r=>r.game_script===s); return r ? +(r.pass_rate*100).toFixed(1) : null; });
-  const leagueY = SCRIPT_ORDER.map(s => { const rows=allRows.filter(r=>r.game_script===s); return +(rows.reduce((s,r)=>s+r.pass_rate,0)/rows.length*100).toFixed(1); });
-  Plotly.react('chart-script', [
-    { type:'scatter', mode:'lines+markers', x:SCRIPT_ORDER, y:teamY, name:team,
-      line:{color:'#5b8dee',width:2.5}, marker:{size:8,color:'#5b8dee'},
-      hovertemplate:`${team} · %{x}: <b>%{y:.1f}%</b><extra></extra>` },
-    { type:'scatter', mode:'lines+markers', x:SCRIPT_ORDER, y:leagueY, name:'League avg',
-      line:{color:'#f0a84a',width:1.5,dash:'dot'}, marker:{size:6,color:'#f0a84a'},
-      hovertemplate:`League avg · %{x}: <b>%{y:.1f}%</b><extra></extra>` }
-  ], { ...PLOTLY_LAYOUT_BASE, showlegend:true,
-    yaxis:{...PLOTLY_LAYOUT_BASE.yaxis, ticksuffix:'%', title:'Pass rate'},
-    xaxis:{...PLOTLY_LAYOUT_BASE.xaxis, title:'Game script'} }, PLOTLY_CONFIG);
-  document.getElementById('lbl-script').textContent = `${team} · ${season}`;
+// GAME SCRIPT
+function drawScript(){
+  const{team,season}=state,metric=state.scriptMetric;
+  const isRate=metric==='pass_rate'||metric==='success',scale=isRate?100:1,suffix=isRate?'%':'',dec=isRate?1:3;
+  const teamRows=DATA.script.filter(r=>r.posteam===team&&r.season===season);
+  const allRows =DATA.script.filter(r=>r.season===season);
+  const teamY  =SCRIPT_ORDER.map(s=>{const r=teamRows.find(r=>r.game_script===s);return r?+(r[metric]*scale).toFixed(dec):null;});
+  const leagueY=SCRIPT_ORDER.map(s=>{const rows=allRows.filter(r=>r.game_script===s);return rows.length?+(rows.reduce((sum,r)=>sum+r[metric],0)/rows.length*scale).toFixed(dec):null;});
+  const ht=`%{x}: <b>%{y:.${dec}f}${suffix}</b><extra></extra>`;
+  Plotly.react('chart-script',[
+    {type:'scatter',mode:'lines+markers',x:SCRIPT_ORDER,y:teamY,name:team,line:{color:'#5b8dee',width:2.5},marker:{size:8,color:'#5b8dee'},hovertemplate:ht},
+    {type:'scatter',mode:'lines+markers',x:SCRIPT_ORDER,y:leagueY,name:'League avg',line:{color:'#f0a84a',width:1.5,dash:'dot'},marker:{size:6,color:'#f0a84a'},hovertemplate:ht}
+  ],{...L,showlegend:true,
+    yaxis:{...L.yaxis,ticksuffix:suffix,title:metric==='pass_rate'?'Pass rate':metric==='success'?'Success rate':'EPA'},
+    xaxis:{...L.xaxis,title:'Game script'}},CFG);
+  document.getElementById('lbl-script').textContent=`${team} · ${season}`;
 }
 
-function drawTrend() {
-  const { team } = state;
-  const teamRows = SEASONS.map(s => DATA.summary.find(r => r.posteam === team && r.season === s) || {});
-  const lgRows   = SEASONS.map(s => ({
-    pass_rate_pct:      leagueAvg('pass_rate_pct', s),
-    shotgun_rate_pct:   leagueAvg('shotgun_rate_pct', s),
-    mean_epa:           leagueAvg('mean_epa', s),
-    no_huddle_rate_pct: leagueAvg('no_huddle_rate_pct', s),
-  }));
-  const trendChart = (elId, field, title, suffix) => {
-    Plotly.react(elId, [
-      { type:'scatter', mode:'lines+markers', x:SEASONS, y:teamRows.map(r=>r[field]||null),
-        name:team, line:{color:'#5b8dee',width:2.5}, marker:{size:10,color:'#5b8dee'},
-        hovertemplate:`%{x}: <b>%{y:.2f}${suffix}</b><extra></extra>` },
-      { type:'scatter', mode:'lines+markers', x:SEASONS, y:lgRows.map(r=>r[field]),
-        name:'League avg', line:{color:'#f0a84a',dash:'dot',width:1.5}, marker:{size:7,color:'#f0a84a'},
-        hovertemplate:`League avg %{x}: <b>%{y:.2f}${suffix}</b><extra></extra>` }
-    ], { ...PLOTLY_LAYOUT_BASE, showlegend:true,
-      yaxis:{...PLOTLY_LAYOUT_BASE.yaxis, ticksuffix:suffix, title},
-      xaxis:{...PLOTLY_LAYOUT_BASE.xaxis, tickvals:SEASONS, ticktext:SEASONS.map(String)},
-      margin:{t:10,r:20,b:50,l:60} }, PLOTLY_CONFIG);
-  };
-  trendChart('chart-trend-pass',     'pass_rate_pct',      'Pass rate',      '%');
-  trendChart('chart-trend-shotgun',  'shotgun_rate_pct',   'Shotgun rate',   '%');
-  trendChart('chart-trend-epa',      'mean_epa',           'EPA / play',     '');
-  trendChart('chart-trend-nohuddle', 'no_huddle_rate_pct', 'No-huddle rate', '%');
-  ['lbl-trend-team','lbl-trend-team2','lbl-trend-team3','lbl-trend-team4']
-    .forEach(id => document.getElementById(id).textContent = team);
+// TREND
+function drawTrend(){
+  const{team}=state;
+  const tr=SEASONS.map(s=>DATA.summary.find(r=>r.posteam===team&&r.season===s)||{});
+  const lr=SEASONS.map(s=>({pass_rate_pct:lgAvg('pass_rate_pct',s),run_rate_pct:lgAvg('run_rate_pct',s),epa_per_pass:lgAvg('epa_per_pass',s),epa_per_rush:lgAvg('epa_per_rush',s),pass_success_rate_pct:lgAvg('pass_success_rate_pct',s),rush_success_rate_pct:lgAvg('rush_success_rate_pct',s)}));
+  const tc=(elId,field,suffix,dec)=>Plotly.react(elId,[
+    {type:'scatter',mode:'lines+markers',x:SEASONS,y:tr.map(r=>r[field]??null),name:team,line:{color:'#5b8dee',width:2.5},marker:{size:10,color:'#5b8dee'},hovertemplate:`%{x}: <b>%{y:.${dec}f}${suffix}</b><extra></extra>`},
+    {type:'scatter',mode:'lines+markers',x:SEASONS,y:lr.map(r=>r[field]),name:'League avg',line:{color:'#f0a84a',dash:'dot',width:1.5},marker:{size:7,color:'#f0a84a'},hovertemplate:`Avg %{x}: <b>%{y:.${dec}f}${suffix}</b><extra></extra>`}
+  ],{...L,showlegend:true,yaxis:{...L.yaxis,ticksuffix:suffix},xaxis:{...L.xaxis,tickvals:SEASONS,ticktext:SEASONS.map(String)},margin:{t:10,r:20,b:50,l:60}},CFG);
+  tc('chart-trend-pass',    'pass_rate_pct',        '%',1);
+  tc('chart-trend-run',     'run_rate_pct',         '%',1);
+  tc('chart-trend-epa-pass','epa_per_pass',         '',3);
+  tc('chart-trend-epa-rush','epa_per_rush',         '',3);
+  tc('chart-trend-psr',     'pass_success_rate_pct','%',1);
+  tc('chart-trend-rsr',     'rush_success_rate_pct','%',1);
+  ['lt1','lt2','lt3','lt4','lt5','lt6'].forEach(id=>document.getElementById(id).textContent=team);
 }
 
-function renderTab(tab) {
-  switch(tab) {
-    case 'overview': drawLeaguePass(); drawLeagueShotgun(); break;
-    case 'downdist': drawDownDist(); break;
-    case 'zone':     drawZone(); break;
-    case 'script':   drawScript(); break;
-    case 'trend':    drawTrend(); break;
-  }
+function renderTab(tab){
+  ({overview:drawOverview,epa:drawEPA,success:drawSuccess,formation:drawFormation,downdist:drawDownDist,zone:drawZone,script:drawScript,trend:drawTrend})[tab]?.();
 }
+function renderAll(){updateStats();const active=document.querySelector('.tab-panel.active').id.replace('tab-','');renderTab(active);}
 
-function renderAll() {
-  updateStats();
-  const active = document.querySelector('.tab-panel.active').id.replace('tab-','');
-  renderTab(active);
-}
-
-document.getElementById('team-select').addEventListener('change', e => {
-  state.team = e.target.value; renderAll();
-});
-document.getElementById('season-seg').addEventListener('click', e => {
-  if (!e.target.dataset.season) return;
-  document.querySelectorAll('#season-seg button').forEach(b => b.classList.remove('active'));
+document.getElementById('team-select').addEventListener('change',e=>{state.team=e.target.value;renderAll();});
+document.getElementById('season-seg').addEventListener('click',e=>{
+  if(!e.target.dataset.season)return;
+  document.querySelectorAll('#season-seg button').forEach(b=>b.classList.remove('active'));
   e.target.classList.add('active');
-  state.season = Number(e.target.dataset.season); renderAll();
+  state.season=Number(e.target.dataset.season);renderAll();
 });
-document.querySelectorAll('.tab-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
-    renderTab(btn.dataset.tab);
-  });
-});
+document.querySelectorAll('.tab-btn').forEach(btn=>btn.addEventListener('click',()=>{
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
+  renderTab(btn.dataset.tab);
+}));
 
-(async () => {
-  try {
+function bindToggle(id,key,fn){
+  document.getElementById(id)?.addEventListener('click',e=>{
+    if(!e.target.dataset.metric)return;
+    document.querySelectorAll(`#${id} button`).forEach(b=>b.classList.remove('active'));
+    e.target.classList.add('active');
+    state[key]=e.target.dataset.metric;fn();
+  });
+}
+bindToggle('dd-toggle',     'ddMetric',     drawDownDist);
+bindToggle('zone-toggle',   'zoneMetric',   drawZone);
+bindToggle('script-toggle', 'scriptMetric', drawScript);
+bindToggle('sr-zone-toggle','srZoneMetric', drawSRZone);
+
+(async()=>{
+  try{
     await loadAll();
-    document.getElementById('loading').style.display = 'none';
+    document.getElementById('loading').style.display='none';
     renderAll();
-  } catch(err) {
-    document.getElementById('loading').innerHTML =
-      `<p style="color:#f06a6a;font-family:monospace;text-align:center;max-width:500px;">
-        Error: ${err.message}<br><br>
-        Make sure all export_*.csv files are in the same folder as index.html,<br>
-        and open via a local server (not file://).<br><br>
-        Run: <code>python -m http.server 8000</code> then open localhost:8000
-      </p>`;
+  }catch(err){
+    document.getElementById('loading').innerHTML=`<p style="color:#f06a6a;font-family:monospace;text-align:center;max-width:500px;">Error: ${err.message}<br><br>Make sure all 6 export_*.csv files are in the same folder as index.html<br>and open via a local server:<br><br><code>python -m http.server 8000</code></p>`;
   }
 })();
 </script>
