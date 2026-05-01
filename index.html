@@ -343,7 +343,7 @@ function updateStats(){
 
 // OVERVIEW
 function safeReact(id, traces, layout, config){
-  try{ safeReact(id, traces, layout, config); }
+  try{ Plotly.react(id, traces, layout, config); }
   catch(e){ console.error('Plotly error on #'+id+':', e); document.getElementById(id).innerHTML='<p style="color:#f06a6a;padding:1rem;font-size:11px;">Chart error: '+e.message+'</p>'; }
 }
 
